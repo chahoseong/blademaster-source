@@ -1,0 +1,4 @@
+﻿#include "BlademasterLogChannels.h"
+
+DEFINE_LOG_CATEGORY(LogBlademaster)
+DEFINE_LOG_CATEGORY(LogBlademasterAbilitySystem)
