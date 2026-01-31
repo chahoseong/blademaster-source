@@ -3,10 +3,12 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "AbilitySystem/BlademasterAbilitySystemComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Input/BlademasterInputComponent.h"
 #include "Input/BlademasterInputConfig.h"
+#include "Player/BlademasterPlayerState.h"
 
 ABlademasterPlayerCharacter::ABlademasterPlayerCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -36,6 +38,22 @@ void ABlademasterPlayerCharacter::SetupPlayerInputComponent(UInputComponent* Pla
 	
 	AddInputMappings();
 	BindInputActions(PlayerInputComponent);
+}
+
+void ABlademasterPlayerCharacter::InitializeWithAbilitySystem()
+{
+	if (const APlayerController* BlademasterPlayerController = GetController<APlayerController>())
+	{
+		ABlademasterPlayerState* BlademasterPlayerState = 
+			BlademasterPlayerController->GetPlayerState<ABlademasterPlayerState>();
+		if (BlademasterPlayerState)
+		{
+			AttributeSet = BlademasterPlayerState->GetBlademasterAttributeSet();
+			
+			AbilitySystemComponent = BlademasterPlayerState->GetBlademasterAbilitySystemComponent();
+			AbilitySystemComponent->InitAbilityActorInfo(BlademasterPlayerState, this);
+		}
+	}
 }
 
 void ABlademasterPlayerCharacter::AddInputMappings() const

@@ -8,4 +8,5 @@ UCLASS()
 class BLADEMASTER_API ABlademasterPlayerController : public APlayerController
 {
 	GENERATED_BODY()
+	
 };

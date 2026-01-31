@@ -19,6 +19,9 @@ public:
 	
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	
+protected:
+	virtual void InitializeWithAbilitySystem() override;
+	
 private:
 	void AddInputMappings() const;
 	void BindInputActions(UInputComponent* PlayerInputComponent);
