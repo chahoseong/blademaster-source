@@ -4,6 +4,7 @@
 #include "Components/CapsuleComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "AbilitySystem/BlademasterAbilitySystemComponent.h"
+#include "Equipment/BlademasterEquipmentManagerComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Input/BlademasterInputComponent.h"
@@ -30,6 +31,8 @@ ABlademasterPlayerCharacter::ABlademasterPlayerCharacter(const FObjectInitialize
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	CameraComponent->bUsePawnControlRotation = false;
 	CameraComponent->SetupAttachment(SpringArmComponent, USpringArmComponent::SocketName);
+	
+	EquipmentManagerComponent = CreateDefaultSubobject<UBlademasterEquipmentManagerComponent>(TEXT("EquipmentManager"));
 }
 
 void ABlademasterPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -38,22 +41,6 @@ void ABlademasterPlayerCharacter::SetupPlayerInputComponent(UInputComponent* Pla
 	
 	AddInputMappings();
 	BindInputActions(PlayerInputComponent);
-}
-
-void ABlademasterPlayerCharacter::InitializeWithAbilitySystem()
-{
-	if (const APlayerController* BlademasterPlayerController = GetController<APlayerController>())
-	{
-		ABlademasterPlayerState* BlademasterPlayerState = 
-			BlademasterPlayerController->GetPlayerState<ABlademasterPlayerState>();
-		if (BlademasterPlayerState)
-		{
-			AttributeSet = BlademasterPlayerState->GetBlademasterAttributeSet();
-			
-			AbilitySystemComponent = BlademasterPlayerState->GetBlademasterAbilitySystemComponent();
-			AbilitySystemComponent->InitAbilityActorInfo(BlademasterPlayerState, this);
-		}
-	}
 }
 
 void ABlademasterPlayerCharacter::AddInputMappings() const
@@ -114,5 +101,31 @@ void ABlademasterPlayerCharacter::Input_Look(const FInputActionValue& InputActio
 	if (LookInput.Y != 0.0f)
 	{
 		AddControllerPitchInput(LookInput.Y);
+	}
+}
+
+void ABlademasterPlayerCharacter::InitializeWithAbilitySystem()
+{
+	if (const APlayerController* BlademasterPlayerController = GetController<APlayerController>())
+	{
+		ABlademasterPlayerState* BlademasterPlayerState = 
+			BlademasterPlayerController->GetPlayerState<ABlademasterPlayerState>();
+		if (BlademasterPlayerState)
+		{
+			AttributeSet = BlademasterPlayerState->GetBlademasterAttributeSet();
+			
+			AbilitySystemComponent = BlademasterPlayerState->GetBlademasterAbilitySystemComponent();
+			AbilitySystemComponent->InitAbilityActorInfo(BlademasterPlayerState, this);
+		}
+	}
+}
+
+void ABlademasterPlayerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	for (const UBlademasterEquipmentDefinition* Equipment : StartupEquipments)
+	{
+		EquipmentManagerComponent->Equip(Equipment);
 	}
 }

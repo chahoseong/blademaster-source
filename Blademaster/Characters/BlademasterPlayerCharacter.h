@@ -4,6 +4,8 @@
 #include "BlademasterCharacter.h"
 #include "BlademasterPlayerCharacter.generated.h"
 
+class UBlademasterEquipmentDefinition;
+class UBlademasterEquipmentManagerComponent;
 struct FInputActionValue;
 class UBlademasterInputConfig;
 class UCameraComponent;
@@ -21,6 +23,7 @@ public:
 	
 protected:
 	virtual void InitializeWithAbilitySystem() override;
+	virtual void BeginPlay() override;
 	
 private:
 	void AddInputMappings() const;
@@ -37,4 +40,10 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, Category="Input")
 	TObjectPtr<UBlademasterInputConfig> InputConfig;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Equipment")
+	TObjectPtr<UBlademasterEquipmentManagerComponent> EquipmentManagerComponent;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Equipment")
+	TArray<TObjectPtr<const UBlademasterEquipmentDefinition>> StartupEquipments;
 };
