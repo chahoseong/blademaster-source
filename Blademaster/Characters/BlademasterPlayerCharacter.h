@@ -2,8 +2,10 @@
 
 #include "CoreMinimal.h"
 #include "BlademasterCharacter.h"
+#include "GameplayTagContainer.h"
 #include "BlademasterPlayerCharacter.generated.h"
 
+class UBlademasterComboComponent;
 class UBlademasterEquipmentDefinition;
 class UBlademasterEquipmentManagerComponent;
 struct FInputActionValue;
@@ -28,8 +30,12 @@ protected:
 private:
 	void AddInputMappings() const;
 	void BindInputActions(UInputComponent* PlayerInputComponent);
+	
 	void Input_Move(const FInputActionValue& InputActionValue);
 	void Input_Look(const FInputActionValue& InputActionValue);
+	
+	void Input_AbilityInputTagPressed(FGameplayTag InputTag);
+	void Input_AbilityInputTagReleased(FGameplayTag InputTag);
 	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera")
@@ -46,4 +52,7 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, Category="Equipment")
 	TArray<TObjectPtr<const UBlademasterEquipmentDefinition>> StartupEquipments;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat")
+	TObjectPtr<UBlademasterComboComponent> ComboComponent;
 };

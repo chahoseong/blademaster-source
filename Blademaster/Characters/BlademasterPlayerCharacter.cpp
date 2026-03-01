@@ -4,6 +4,7 @@
 #include "Components/CapsuleComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "AbilitySystem/BlademasterAbilitySystemComponent.h"
+#include "Combat/BlademasterComboComponent.h"
 #include "Equipment/BlademasterEquipmentManagerComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -33,6 +34,7 @@ ABlademasterPlayerCharacter::ABlademasterPlayerCharacter(const FObjectInitialize
 	CameraComponent->SetupAttachment(SpringArmComponent, USpringArmComponent::SocketName);
 	
 	EquipmentManagerComponent = CreateDefaultSubobject<UBlademasterEquipmentManagerComponent>(TEXT("EquipmentManager"));
+	ComboComponent = CreateDefaultSubobject<UBlademasterComboComponent>(TEXT("ComboSystem"));
 }
 
 void ABlademasterPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -69,6 +71,10 @@ void ABlademasterPlayerCharacter::BindInputActions(UInputComponent* PlayerInputC
 		ETriggerEvent::Triggered, this, &ThisClass::Input_Move, false);
 	BlademasterInputComponent->BindNativeAction(InputConfig, BlademasterGameplayTags::Input_Action_Look,
 		ETriggerEvent::Triggered, this, &ThisClass::Input_Look, false);
+	
+	TArray<uint32> BindHandles;
+	BlademasterInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::Input_AbilityInputTagPressed,
+		&ThisClass::Input_AbilityInputTagReleased, BindHandles);
 }
 
 void ABlademasterPlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
@@ -101,6 +107,22 @@ void ABlademasterPlayerCharacter::Input_Look(const FInputActionValue& InputActio
 	if (LookInput.Y != 0.0f)
 	{
 		AddControllerPitchInput(LookInput.Y);
+	}
+}
+
+void ABlademasterPlayerCharacter::Input_AbilityInputTagPressed(FGameplayTag InputTag)
+{
+	if (UBlademasterAbilitySystemComponent* BlademasterAbilitySystem = GetBlademasterAbilitySystemComponent())
+	{
+		BlademasterAbilitySystem->AbilityInputTagPressed(InputTag);
+	}
+}
+
+void ABlademasterPlayerCharacter::Input_AbilityInputTagReleased(FGameplayTag InputTag)
+{
+	if (UBlademasterAbilitySystemComponent* BlademasterAbilitySystem = GetBlademasterAbilitySystemComponent())
+	{
+		BlademasterAbilitySystem->AbilityInputTagReleased(InputTag);
 	}
 }
 

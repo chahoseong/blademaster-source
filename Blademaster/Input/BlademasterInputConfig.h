@@ -18,6 +18,8 @@ struct FBlademasterInputAction
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<const UInputAction> InputAction;
+	
+	bool IsValid() const;
 };
 
 UCLASS(BlueprintType, Const)
@@ -35,4 +37,7 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(TitleProperty="InputTag"))
 	TArray<FBlademasterInputAction> NativeInputActions;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(TitleProperty="InputTag"))
+	TArray<FBlademasterInputAction> AbilityInputActions;
 };

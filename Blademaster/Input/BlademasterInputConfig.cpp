@@ -1,6 +1,11 @@
 ﻿#include "Input/BlademasterInputConfig.h"
 #include "BlademasterLogChannels.h"
 
+bool FBlademasterInputAction::IsValid() const
+{
+	return InputAction && InputTag.IsValid();
+}
+
 const UInputAction* UBlademasterInputConfig::FindNativeInputActionForTag(const FGameplayTag& InputTag,
                                                                          bool bLogNotFound) const
 {
